@@ -13,26 +13,35 @@
 ## 系统架构总览
 
 ```mermaid
+---
+config:
+  flowchart:
+    nodeSpacing: 40
+    rankSpacing: 50
+    padding: 16
+    wrappingWidth: 320
+---
 flowchart TD
-    CAM["多品牌家庭摄像头<br/>(Aqara / 小米分钟片 / 小米床头包)"] -->|"SMB / 写入 NAS"| SRC["NAS 只读源目录 (:ro)<br/>/volume2/CCTV & /volume2/Baby_Vault"]
+    CAM["多品牌摄像头<br/>Aqara / 小米"] -->|"SMB 写入"| SRC["NAS 只读源目录<br/>/cctv :ro<br/>/vault :ro"]
 
-    SRC -->|"仅读 · 永不改删"| V3["nas-growth-v3 (NAS Docker 24x7)<br/>端口 18795"]
-    SRC -->|"仅读 · 永不改删"| BAK["nas-baidu-backup (NAS Docker)<br/>端口 8791"]
-    SRC -->|"SMB 只读挂载 (可选)"| PC["src/cctv_ai (PC / GPU 本地工作站)<br/>端口 8765 / 18791"]
+    SRC -->|"只读"| V3["nas-growth-v3<br/>NAS 24×7 容器<br/>端口 18795"]
+    SRC -->|"只读"| BAK["nas-baidu-backup<br/>只读云备容器<br/>端口 8791"]
+    SRC -->|"SMB 只读"| PC["src/cctv_ai<br/>PC 本地工作站<br/>端口 8765"]
 
-    subgraph V3_PIPE["V3 NAS 无人值守流水线"]
-        V3_LOC["本地轻模型预筛<br/>YOLO26s ONNX + YAMNet TFLite<br/>F0≥310Hz + 瞬态 INT8 Whisper<br/>SCRFD + ArcFace 闭集家人认脸"]
-        V3_VLM["多云 VLM 分级并发路由<br/>fast / pro / director 自动故障切换<br/>(音轨 & 床头夜睡永不上云)"]
-        V3_MEDIA["VAAPI 硬件编码 & AI 导演<br/>T0 Reflink / T1 720p15 / T2 浓缩<br/>日高光 / 月度 / 季度 / 年度成片"]
+    subgraph V3_PIPE["V3 无人值守流水线"]
+        direction TB
+        V3_LOC["本地轻模型预筛<br/>YOLO / YAMNet<br/>INT8 Whisper<br/>家人闭集认脸"]
+        V3_VLM["多云 VLM 路由<br/>fast / pro / 导演<br/>音轨不上云<br/>夜睡不上云"]
+        V3_MEDIA["VAAPI 编解码<br/>T0/T1/T2 分层<br/>AI 导演成片"]
         V3_LOC --> V3_VLM --> V3_MEDIA
     end
 
-    V3 --> V3_PIPE
-    V3_MEDIA -->|"精编成果同步 (可选)"| OL["OpenList -> 云端加密/网盘归档"]
-    V3_MEDIA -->|"HTTP Range 局域网访问"| UI_V3["家庭相册与运维看板<br/>http://<NAS_LAN_IP>:18795/"]
+    V3 --> V3_LOC
+    V3_MEDIA -->|"可选同步"| OL["OpenList<br/>精编成果上云"]
+    V3_MEDIA -->|"HTTP Range"| UI_V3["家庭相册看板<br/>LAN :18795"]
 
-    BAK -->|"OpenList 只写账号<br/>SHA-256 断点续传"| OL_BAK["百度网盘 /CCTV<br/>(禁止删除/重命名)"]
-    PC -->|"本地 Qwen3-VL / MiniCPM-V<br/>水印 OCR / 声音指纹"| UI_PC["生活日记 / 语义检索 / 人工审片<br/>http://127.0.0.1:8765/"]
+    BAK -->|"OpenList<br/>SHA-256 续传"| OL_BAK["百度网盘 /CCTV<br/>仅上传禁删改"]
+    PC -->|"本地 Qwen3-VL<br/>水印 OCR"| UI_PC["日记与审片页<br/>127.0.0.1:8765"]
 ```
 
 ### 仓库目录结构
