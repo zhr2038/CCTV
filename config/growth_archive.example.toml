@@ -1,0 +1,111 @@
+[project]
+nas_root = "\\\\192.168.1.100\\cctv"
+birthday = "2025-01-01"
+pilot_output = "output/growth-archive-pilot"
+
+[vlm]
+runtime = "output/annual-film-validation/llama_cuda/llama-server.exe"
+model = "output/model-comparison/qwen38_gguf/Qwen3.8-27B-Q4_K_M.gguf"
+projector = "output/model-comparison/qwen38_gguf/mmproj-Qwen3.8-27B-BF16.gguf"
+model_sha256 = "c600de0300ae8a0eb3a6c0b8b5561b8b96f16bd2c863c2a66c42de29d391a747"
+projector_sha256 = "de2a49866988ea272c43dc2a43ee2662c25725a717ca5b9059ea420a97f53fe8"
+fallback_model = "output/annual-film-validation/minicpm35_gguf/MiniCPM-V-4_7-35B-A3B-Q4_K_M.gguf"
+fallback_projector = "output/annual-film-validation/minicpm35_gguf/mmproj-model-f16.gguf"
+port = 18898
+context_tokens = 32768
+max_output_tokens = 768
+
+[asr]
+model_id = "openai/whisper-large-v3-turbo"
+model_dir = ".data/models/whisper-large-v3-turbo"
+fallback_model_id = "openai/whisper-small"
+fallback_model_dir = ".data/models/whisper-small"
+local_files_only = true
+language = "zh"
+keywords = ["妈妈", "麻麻", "妈咪", "爸爸", "粑粑", "爸比", "妈", "爸"]
+
+[audio]
+yamnet_model = ".data/models/yamnet.tflite"
+yamnet_class_map = ".data/models/yamnet_class_map.csv"
+labels = ["laughter", "child_vocalization", "speech", "baby_cry"]
+minimum_confidence = 0.30
+
+[auto_discovery]
+enabled = true
+roots = ["aqara_video", "xiaomi_camera_videos"]
+ignore_ids = []
+stale_warning_days = 1.5
+default_role = "study_or_room"
+default_zoom_policy = "gentle_if_wide"
+default_zoom_factor = 1.25
+default_t1_res = 720
+default_milestone_watch = true
+
+[cameras."lumi3.example_bedroom"]
+name = "宝宝房顶部"
+family = "aqara"
+relative_root = "aqara_video/lumi3.example_bedroom"
+enabled = true
+role = "bedroom_ceiling"
+zoom_policy = "smart_child_crop"
+zoom_factor = 1.4
+t1_res = 720
+milestone_watch = true
+daytime_photos = true
+
+[cameras."lumi1.example_living"]
+name = "客厅"
+family = "aqara"
+relative_root = "aqara_video/lumi1.example_living"
+cloud_backfill_dir = "Aqara_Cloud_G3"
+cloud_backfill_start_day = "2025-11-11"
+cloud_backfill_end_day = "2025-11-17"
+enabled = true
+role = "living_room"
+zoom_policy = "smart_child_crop"
+zoom_factor = 1.2
+t1_res = 720
+milestone_watch = true
+daytime_photos = true
+
+[cameras."CAM_BEDSIDE_001"]
+name = "宝宝床头"
+family = "xiaomi_bundle"
+relative_root = "xiaomi_camera_videos/CAM_BEDSIDE_001"
+enabled = true
+role = "bedside_crib"
+zoom_policy = "gentle_child_crop"
+zoom_factor = 1.25
+t1_res = 720
+day_hours = [8, 20]
+daytime_photos = false
+suppress_static_boxes = true
+night_sleep_to_t2 = true
+milestone_watch = true
+
+[cameras."lumi3.example_kitchen4k"]
+name = "厨房 G350"
+family = "aqara"
+relative_root = "aqara_video/lumi3.example_kitchen4k"
+enabled = true
+role = "kitchen_4k"
+zoom_policy = "never"
+zoom_factor = 1.0
+t1_res = 720
+t1_mode = "verified_child_only"
+milestone_watch = true
+daytime_photos = true
+
+[cameras."cam_kitchen_01"]
+name = "厨房（旧小米）"
+family = "xiaomi_minute"
+relative_root = "xiaomi_camera_videos/cam_kitchen_01"
+enabled = true
+historical_archive = true
+role = "kitchen"
+zoom_policy = "never"
+zoom_factor = 1.0
+t1_res = 720
+t1_mode = "verified_child_only"
+milestone_watch = true
+daytime_photos = true

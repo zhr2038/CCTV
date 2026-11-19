@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="dark">
+    <title>家庭录像复核</title>
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/assets/styles.css?v=20260730-2">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">
+            <span></span><span></span>
+          </div>
+          <div>
+            <p class="brand-kicker">FAMILY ARCHIVE</p>
+            <h1>家庭录像复核</h1>
+          </div>
+        </div>
+
+        <div class="privacy-state">
+          <span class="status-beacon"></span>
+          <div>
+            <strong>仅在本机运行</strong>
+            <span>原片只读 · 不上传云端</span>
+          </div>
+        </div>
+
+        <a class="diary-entry" href="/diary">
+          <span>宝宝生活日记</span>
+          <strong>查看喝奶、玩耍、姿态和推定睡眠 →</strong>
+        </a>
+
+        <nav class="camera-nav" aria-label="摄像头">
+          <div class="section-label">
+            <span>摄像头</span>
+            <button id="all-cameras" class="text-button" type="button">全部</button>
+          </div>
+          <div id="camera-list" class="camera-list" aria-live="polite"></div>
+        </nav>
+
+        <div class="sidebar-footer">
+          <span>最近索引</span>
+          <strong id="last-scan">读取中</strong>
+          <span id="archive-count">索引读取中</span>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="toolbar">
+          <div class="view-title">
+            <p>声音事件 / 人工复核</p>
+            <h2 id="page-title">哭声候选</h2>
+          </div>
+          <div class="filters" aria-label="筛选">
+            <label>
+              <span>审核范围</span>
+              <select id="mode-filter">
+                <option value="smart">智能审核 · 5 条</option>
+                <option value="all">全部候选</option>
+              </select>
+            </label>
+            <label>
+              <span>日期</span>
+              <select id="date-filter"></select>
+            </label>
+            <label>
+              <span>类型</span>
+              <select id="label-filter"></select>
+            </label>
+            <label>
+              <span>置信度</span>
+              <select id="confidence-filter">
+                <option value="0.60">≥ 0.60</option>
+                <option value="0.75">≥ 0.75</option>
+                <option value="0.85">≥ 0.85</option>
+                <option value="0.95">≥ 0.95</option>
+              </select>
+            </label>
+          </div>
+        </header>
+
+        <section class="summary-strip" aria-label="本日摘要">
+          <div class="summary-primary">
+            <span id="pending-label">今日还需审核</span>
+            <strong id="pending-count">—</strong>
+          </div>
+          <div>
+            <span id="completed-label">今日已完成</span>
+            <strong id="completed-count">—</strong>
+          </div>
+          <div>
+            <span id="archive-label">免人工归档</span>
+            <strong id="auto-archive-count">—</strong>
+          </div>
+          <div>
+            <span>原始候选</span>
+            <strong id="raw-count">—</strong>
+          </div>
+        </section>
+
+        <section id="pipeline-strip" class="pipeline-strip" aria-label="自动处理进度">
+          <div class="pipeline-heading">
+            <span id="pipeline-beacon" class="pipeline-beacon idle" aria-hidden="true"></span>
+            <div>
+              <span class="eyebrow">AUTOMATION</span>
+              <strong id="pipeline-status">读取处理状态</strong>
+            </div>
+          </div>
+          <div class="pipeline-meter">
+            <div class="pipeline-copy">
+              <span id="pipeline-scope">最近数据 · 宝宝房间</span>
+              <strong id="pipeline-progress-copy">—</strong>
+            </div>
+            <progress
+              id="pipeline-track"
+              class="pipeline-track"
+              aria-label="音频分析完成度"
+              max="100"
+              value="0"
+            ></progress>
+          </div>
+          <div class="pipeline-queues" aria-label="处理队列">
+            <span><b id="pipeline-probe-queue">—</b> 待探测</span>
+            <span><b id="pipeline-audio-queue">—</b> 音频队列</span>
+            <span><b id="pipeline-watermark-queue">—</b> 时间校准</span>
+            <span id="pipeline-error-group"><b id="pipeline-error-count">—</b> 错误</span>
+          </div>
+        </section>
+
+        <div class="workspace">
+          <section class="timeline-pane" aria-labelledby="timeline-title">
+            <div class="pane-heading">
+              <div>
+                <span class="eyebrow">TIMELINE</span>
+                <h3 id="timeline-title">今日智能审核</h3>
+                <p id="inbox-note" class="inbox-note">每天只需处理固定名单</p>
+              </div>
+              <span id="timeline-scope" class="scope-copy">加载中</span>
+            </div>
+            <div id="timeline" class="timeline" aria-live="polite">
+              <div class="timeline-skeleton"></div>
+              <div class="timeline-skeleton short"></div>
+              <div class="timeline-skeleton"></div>
+            </div>
+          </section>
+
+          <section class="inspector" aria-labelledby="inspector-title">
+            <div class="visual-stage">
+              <video
+                id="preview-video"
+                controls
+                playsinline
+                preload="metadata"
+                hidden
+              ></video>
+              <div id="preview-placeholder" class="preview-placeholder">
+                <div class="pulse-rings" aria-hidden="true">
+                  <span></span><span></span><span></span>
+                </div>
+                <p>选择事件后生成本地短预览</p>
+                <span>只截取候选前后片段，不保存连续音频</span>
+              </div>
+              <div class="visual-overlay">
+                <span id="selected-camera">尚未选择</span>
+                <strong id="selected-time">--:--</strong>
+              </div>
+            </div>
+
+            <div class="inspector-body">
+              <div class="selected-heading">
+                <div>
+                  <span id="selected-status" class="review-status pending">待复核</span>
+                  <h3 id="inspector-title">选择一个候选事件段</h3>
+                  <p id="selected-meta">时间、来源与模型证据会显示在这里。</p>
+                </div>
+                <button id="preview-button" class="primary-button" type="button" disabled>
+                  生成短预览
+                </button>
+              </div>
+
+              <div class="confidence-row">
+                <span>最高置信度</span>
+                <progress
+                  id="confidence-track"
+                  class="confidence-track"
+                  aria-label="最高置信度"
+                  max="1"
+                  value="0"
+                ></progress>
+                <strong id="selected-confidence">—</strong>
+              </div>
+
+              <div class="review-area">
+                <div class="section-label">
+                  <span>人工结论</span>
+                  <small>结论会写入本地索引</small>
+                </div>
+                <div class="review-actions">
+                  <button type="button" data-verdict="confirmed">确认哭声</button>
+                  <button type="button" data-verdict="false_positive">不是哭声</button>
+                  <button type="button" data-verdict="uncertain">暂不确定</button>
+                </div>
+                <label class="note-field">
+                  <span>备注（可选）</span>
+                  <textarea id="review-note" rows="2" maxlength="2000" placeholder="例如：电视声音、成人说话、真实哭声……"></textarea>
+                </label>
+              </div>
+
+              <div class="sources">
+                <div class="section-label">
+                  <span>原始证据</span>
+                  <small id="source-count">0 个片段</small>
+                </div>
+                <div id="source-list" class="source-list"></div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="/assets/app.js?v=20260730-1" defer></script>
+  </body>
+</html>

@@ -1,0 +1,45 @@
+services:
+  cctv-baidu-backup:
+    build: .
+    image: cctv-baidu-backup:1.0.3
+    container_name: cctv-baidu-backup
+    restart: unless-stopped
+    init: true
+    read_only: true
+    cap_drop: [ALL]
+    cap_add: [DAC_OVERRIDE]
+    security_opt: [no-new-privileges:true]
+    cpus: 0.5
+    mem_limit: 256m
+    pids_limit: 64
+    blkio_config:
+      weight: 100
+    stop_grace_period: 30s
+    volumes:
+      - /volume2/CCTV:/source:ro
+      - /volume2/Baby_Vault:/vault:ro
+      - ./config.json:/app/config.json:ro
+      - ./secrets/openlist.json:/run/secrets/openlist.json:ro
+      - ./state:/state:rw
+    tmpfs:
+      - /tmp:size=16m,noexec,nosuid
+    ports:
+      # 替换为你的 NAS 局域网 IP（建议仅绑定局域网，勿暴露公网）
+      - "192.168.1.100:8791:8791"
+    networks:
+      - openlist
+    healthcheck:
+      test: [CMD, python, /app/backup.py, health]
+      interval: 60s
+      timeout: 5s
+      start_period: 120s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+networks:
+  openlist:
+    external: true
+    name: openlist-organizer_default

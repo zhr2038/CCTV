@@ -1,0 +1,46 @@
+# Runtime data, caches, virtualenvs & models
+.data/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.playwright-cli/
+output/
+*.egg-info/
+src/*.egg-info/
+
+# Unrelated tools & private research/review notes
+XiaoAI/
+reports/
+research_notes/
+
+# Local secrets & environment overrides
+.env
+.env.*
+!.env.example
+!.env.nas.example
+nas-growth-v3/models/
+nas-growth-v3/secrets/
+nas-growth-v3/conf/
+nas-baidu-backup/secrets/
+nas-baidu-backup/state/
+
+# Local private configs (keep on disk for production NAS/PC runs; use *.example.* in Git)
+nas-growth-v3/config.toml
+nas-growth-v3/compose.yaml
+nas-baidu-backup/config.json
+nas-baidu-backup/compose.yaml
+config/cameras.toml
+config/growth_archive.toml
+
+# Personal screenshots, operational snapshots & private family-data reports
+nas-baidu-backup/dashboard-live.png
+nas-baidu-backup/reboot-fix-20261108.png
+nas-baidu-backup/deployment-verification.json
+nas-baidu-backup/reboot-fix-verification-20261108.json
+nas-baidu-backup/figma-result.json
+nas-baidu-backup/DESIGN.md
+nas-baidu-backup/design-preview.html
+docs/NAS_INVENTORY.md
+docs/monthly-analysis-2026-07.md

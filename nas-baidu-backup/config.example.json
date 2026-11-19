@@ -1,0 +1,23 @@
+{
+  "source": "/source",
+  "vault_root": "/vault",
+  "vault_priority_start": "2025-01-01",
+  "require_source_mount": true,
+  "expected_source_dirs": ["aqara_video", "xiaomi_camera_videos", "TeslaCam"],
+  "state": "/state",
+  "openlist_url": "http://openlist:5244",
+  "credentials": "/run/secrets/openlist.json",
+  "destination": "/",
+  "daily_time": "03:30",
+  "daily_enabled": false,
+  "run_on_first_start": true,
+  "min_age_seconds": 5400,
+  "upload_timeout": 7200,
+  "retries": 3,
+  "max_consecutive_failures": 5,
+  "scan_pause_seconds": 0.1,
+  "bandwidth_mib": 0,
+  "status_port": 8791,
+  "dashboard_hosts": ["192.168.1.100", "127.0.0.1", "localhost"],
+  "exclude_names": ["@eaDir", "#recycle", "@Recycle", ".Trash", ".recycle", "$RECYCLE.BIN", "System Volume Information"]
+}

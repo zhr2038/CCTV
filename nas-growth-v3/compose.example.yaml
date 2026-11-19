@@ -1,0 +1,43 @@
+services:
+  cctv-growth-v3:
+    build: .
+    image: cctv-growth-v3:3.4.0
+    container_name: cctv-growth-v3
+    restart: unless-stopped
+    init: true
+    user: "1000:10"
+    group_add:
+      - "105"
+      - "44"
+    devices:
+      - /dev/dri:/dev/dri
+    # 可选：若容器内需要指定局域网 DNS，请取消注释并填入路由器 IP
+    # dns:
+    #   - 192.168.1.1
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    cpus: 5.0
+    mem_limit: 4096m
+    pids_limit: 512
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp:size=512m,mode=1777
+    ports:
+      # 替换为你的 NAS 局域网 IP（建议仅绑定局域网，勿暴露公网）
+      - "192.168.1.100:18795:18795"
+    volumes:
+      - /volume2/CCTV:/cctv:ro
+      - /volume2/Baby_Vault:/vault:ro
+      - /volume2/Growth_Archive_V3:/data:rw
+      - ./conf:/app/conf:ro
+      - ./secrets:/run/secrets:ro
+      - /usr/share/fonts/ugfonts:/host_fonts:ro
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

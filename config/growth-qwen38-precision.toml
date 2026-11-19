@@ -1,0 +1,21 @@
+[workflow]
+camera_config = "config/cameras.toml"
+runtime = "output/annual-film-validation-20261103/llama_b11960_cuda13/llama-server.exe"
+model = "output/model-comparison-20261103/qwen38_gguf/Qwen3.8-27B-Q4_K_M.gguf"
+projector = "output/model-comparison-20261103/qwen38_gguf/mmproj-Qwen3.8-27B-BF16.gguf"
+model_sha256 = "c600de0300ae8a0eb3a6c0b8b5561b8b96f16bd2c863c2a66c42de29d391a747"
+projector_sha256 = "de2a49866988ea272c43dc2a43ee2662c25725a717ca5b9059ea420a97f53fe8"
+port = 8898
+max_frames = 64
+overlap_frames = 8
+image_max_edge = 768
+detail_image_max_edge = 1024
+prompt_style = "neutral_observer_v2"
+max_output_tokens = 768
+context_tokens = 32768
+[audio]
+enabled = true
+model = ".data/models/yamnet.tflite"
+class_map = ".data/models/yamnet_class_map.csv"
+labels = ["speech", "baby_cry", "laughter", "child_vocalization"]
+minimum_confidence = 0.35

@@ -1,0 +1,72 @@
+[project]
+timezone = "Asia/Shanghai"
+source_root_windows = "\\\\192.168.1.100\\cctv"
+source_root_linux = "/volume2/CCTV"
+stability_age_minutes = 90
+stable_observations = 2
+
+[privacy]
+source_read_only = true
+face_recognition = false
+cloud_upload = false
+
+[family_routine]
+# 家庭实际作息先验：用于估算全天顿数，不会把未拍到的时段冒充为已确认喂养。
+feeding_interval_minutes = 180
+# 75 分钟内的多次奶瓶接触视为同一顿中的续喂/补喂目击。
+feeding_episode_merge_minutes = 75
+
+[audio]
+enabled = true
+transcription_mode = "on_demand"
+store_continuous_transcripts = false
+model_path = ".data/models/yamnet.tflite"
+label_map_path = ".data/models/yamnet_class_map.csv"
+minimum_confidence = 0.60
+merge_gap_seconds = 1.0
+event_labels = [
+  "speech",
+  "baby_cry",
+  "scream",
+  "yell",
+  "impact",
+  "glass_breaking",
+  "smoke_alarm",
+  "fire_alarm",
+  "knock",
+  "running_water",
+]
+
+[[cameras]]
+id = "lumi1.example_living"
+name = "客厅"
+location = "living_room"
+kind = "aqara_event"
+relative_root = "aqara_video/lumi1.example_living"
+audio_enabled = true
+
+[[cameras]]
+id = "lumi3.example_bedroom"
+name = "宝宝房间顶部"
+location = "baby_room_ceiling"
+kind = "aqara_event"
+relative_root = "aqara_video/lumi3.example_bedroom"
+audio_enabled = true
+
+[[cameras]]
+id = "cam_kitchen_01"
+name = "厨房"
+location = "kitchen"
+kind = "xiaomi_minute_event"
+relative_root = "xiaomi_camera_videos/cam_kitchen_01"
+audio_enabled = true
+
+[[cameras]]
+id = "CAM_BEDSIDE_001"
+name = "宝宝床头"
+location = "baby_bedside"
+kind = "xiaomi_watermark_bundle"
+relative_root = "xiaomi_camera_videos/CAM_BEDSIDE_001"
+audio_enabled = true
+watermark_crop = [55, 10, 1050, 120]
+watermark_sample_seconds = 5.0

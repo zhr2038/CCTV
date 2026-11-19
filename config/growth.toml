@@ -1,0 +1,20 @@
+[workflow]
+camera_config = "config/cameras.toml"
+# These are experiment outputs with pinned model provenance, not a new download.
+runtime = "output/annual-film-validation-20261103/llama_b11960_cuda13/llama-server.exe"
+model = "output/annual-film-validation-20261103/minicpm35_gguf/MiniCPM-V-4_7-35B-A3B-Q4_K_M.gguf"
+projector = "output/annual-film-validation-20261103/minicpm35_gguf/mmproj-model-f16.gguf"
+model_sha256 = "9ecf91e814d7e9adc64325b1b65f8628a9b1bb8da4f61a92869ca7489bfd888e"
+port = 8899
+max_frames = 128
+overlap_frames = 16
+image_max_edge = 512
+max_output_tokens = 512
+context_tokens = 32768
+
+[audio]
+enabled = true
+model = ".data/models/yamnet.tflite"
+class_map = ".data/models/yamnet_class_map.csv"
+labels = ["speech", "baby_cry", "laughter", "child_vocalization"]
+minimum_confidence = 0.35

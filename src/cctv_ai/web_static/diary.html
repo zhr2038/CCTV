@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="color-scheme" content="light">
+    <title>然然生活日记</title>
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/assets/diary.css?v=20260802-1">
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="identity" href="/diary" aria-label="然然生活日记首页">
+        <span class="identity-mark" aria-hidden="true">R</span>
+        <span>
+          <small>LOCAL FAMILY ARCHIVE</small>
+          <strong>然然生活日记</strong>
+        </span>
+      </a>
+      <nav aria-label="主要页面">
+        <a class="active" href="/diary">生活日记</a>
+        <a href="/">声音复核</a>
+      </nav>
+      <span class="privacy">
+        <i></i>
+        本地分析
+      </span>
+    </header>
+
+    <main>
+      <section class="control-band" aria-labelledby="diary-heading">
+        <div>
+          <p class="eyebrow">BABY DIARY</p>
+          <h1 id="diary-heading">一天，看得见的成长</h1>
+          <p id="scope-copy">读取录像覆盖与活动证据…</p>
+        </div>
+        <div class="range-controls">
+          <label>
+            <span>日期</span>
+            <input id="date-input" type="date">
+          </label>
+          <div class="period-switch" role="group" aria-label="统计周期">
+            <button type="button" data-period="day" class="active">日</button>
+            <button type="button" data-period="week">周</button>
+            <button type="button" data-period="month">月</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="analysis-strip" class="analysis-strip" aria-label="视觉分析进度">
+        <div>
+          <span id="analysis-beacon" class="analysis-beacon"></span>
+          <p>
+            <small>VISUAL INDEX</small>
+            <strong id="analysis-status">读取分析状态</strong>
+          </p>
+        </div>
+        <div class="analysis-meters">
+          <div class="analysis-progress">
+            <small>基础视觉</small>
+            <progress id="analysis-progress" max="100" value="0"></progress>
+            <span id="analysis-progress-copy">—</span>
+          </div>
+          <div class="analysis-progress search-index-progress">
+            <small>QWEN3 搜索</small>
+            <progress id="search-index-progress" max="100" value="0"></progress>
+            <span id="search-index-progress-copy">—</span>
+          </div>
+        </div>
+        <p id="analysis-detail">关键帧、目标与语义索引均只保存在本机。</p>
+      </section>
+
+      <section class="stat-line" aria-label="活动摘要">
+        <button type="button" data-activity="feeding">
+          <span>喝奶 / 进食参考</span>
+          <strong id="stat-feeding">—</strong>
+          <small id="stat-feeding-detail">等待分析</small>
+        </button>
+        <button type="button" data-activity="play">
+          <span>玩耍</span>
+          <strong id="stat-play">—</strong>
+          <small id="stat-play-detail">等待分析</small>
+        </button>
+        <button type="button" data-activity="crawling">
+          <span>爬行姿态</span>
+          <strong id="stat-crawling">—</strong>
+          <small id="stat-crawling-detail">等待分析</small>
+        </button>
+        <button type="button" data-activity="sitting">
+          <span>坐姿</span>
+          <strong id="stat-sitting">—</strong>
+          <small id="stat-sitting-detail">等待分析</small>
+        </button>
+        <button type="button" data-activity="inferred_sleep">
+          <span>推定睡眠</span>
+          <strong id="stat-inferred-sleep">—</strong>
+          <small id="stat-inferred-sleep-detail">等待分析</small>
+        </button>
+      </section>
+
+      <section class="period-insights" aria-labelledby="insights-heading">
+        <div class="insights-heading">
+          <p class="eyebrow">FAMILY REFERENCE</p>
+          <h2 id="insights-heading">吃饭与睡眠参考</h2>
+          <p id="life-headline">正在把原片证据、状态边界和录像缺口合并成可核对的参考。</p>
+        </div>
+        <div id="insight-list" class="insight-list" aria-live="polite"></div>
+      </section>
+
+      <section class="search-section" aria-labelledby="search-heading">
+        <div>
+          <p class="eyebrow">VISUAL SEARCH</p>
+          <h2 id="search-heading">用一句话找画面</h2>
+        </div>
+        <form id="search-form">
+          <input
+            id="search-input"
+            type="search"
+            maxlength="200"
+            autocomplete="off"
+            placeholder="例如：宝宝在客厅玩球、有人用奶瓶喂宝宝"
+          >
+          <button type="submit">搜索全部录像</button>
+        </form>
+        <p id="search-note">默认搜索全部日期；已有 Qwen3 事件优先，开放式画面标为“可能相关”。不做人脸识别，不上传画面。</p>
+        <div id="search-results" class="search-results" hidden></div>
+      </section>
+
+      <div class="diary-workspace">
+        <section class="event-column" aria-labelledby="timeline-heading">
+          <header class="section-heading">
+            <div>
+              <p class="eyebrow">OBSERVED TIMELINE</p>
+              <h2 id="timeline-heading">生活会话</h2>
+            </div>
+            <button id="clear-filter" class="quiet-button" type="button" hidden>
+              显示全部
+            </button>
+          </header>
+          <p id="timeline-note" class="section-note">
+            相邻、跨摄像头的片段会自动合并；每个会话均可回看原片。
+          </p>
+          <div class="timeline-focus">
+            <div class="focus-block">
+              <div class="subheading">
+                <span>今日重点</span>
+                <small>自动挑选，最多 5 条</small>
+              </div>
+              <div id="highlight-list" class="highlight-list"></div>
+            </div>
+            <div class="focus-block review-focus">
+              <div class="subheading">
+                <span>只复核最有影响的候选</span>
+                <small id="review-copy">每天最多 3 条</small>
+              </div>
+              <div id="review-list" class="review-list"></div>
+            </div>
+          </div>
+          <div id="event-list" class="event-list" aria-live="polite">
+            <div class="loading-line"></div>
+            <div class="loading-line short"></div>
+            <div class="loading-line"></div>
+          </div>
+        </section>
+
+        <section id="evidence-panel" class="evidence-panel" aria-labelledby="evidence-heading">
+          <div id="evidence-stage" class="evidence-stage">
+            <img id="evidence-image" alt="" hidden>
+            <video id="evidence-video" controls playsinline preload="metadata" hidden></video>
+            <div id="evidence-empty" class="evidence-empty">
+              <span aria-hidden="true">↗</span>
+              <p>选择时间轴中的活动</p>
+              <small>这里会显示模型证据和原片偏移</small>
+            </div>
+            <div class="evidence-badge">
+              <span id="evidence-location">尚未选择</span>
+              <strong id="evidence-time">--:--</strong>
+            </div>
+          </div>
+          <div class="evidence-copy">
+            <div class="evidence-title">
+              <div>
+                <span id="evidence-kind">可见活动</span>
+                <h2 id="evidence-heading">查看活动证据</h2>
+                <p id="evidence-meta">时长、位置、置信度和时间精度会显示在这里。</p>
+              </div>
+              <button id="clip-button" type="button" disabled>播放原片片段</button>
+            </div>
+            <div class="confidence">
+              <span>模型置信度</span>
+              <progress id="evidence-confidence" max="1" value="0"></progress>
+              <strong id="evidence-confidence-copy">—</strong>
+            </div>
+            <div class="evidence-thumbs">
+              <div class="subheading">
+                <span>支持证据</span>
+                <small id="evidence-count">0 张</small>
+              </div>
+              <div id="evidence-thumbs" class="thumb-list"></div>
+            </div>
+            <div class="event-feedback">
+              <div class="subheading">
+                <span>快速纠正</span>
+                <small>只需在明显不对时操作</small>
+              </div>
+              <div>
+                <button type="button" data-verdict="confirmed">这条正确</button>
+                <button type="button" data-verdict="rejected">识别错了</button>
+                <button type="button" data-verdict="uncertain">暂不确定</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <section class="secondary-grid">
+        <div class="toy-section">
+          <header class="section-heading">
+            <div>
+              <p class="eyebrow">VISIBLE INTERACTIONS</p>
+              <h2>已识别玩具类型（近似）</h2>
+            </div>
+          </header>
+          <p class="section-note">低分辨率画面中的类别是近似识别；“最常互动”只在已识别类别中比较，不代表心理偏好。</p>
+          <div id="toy-list" class="toy-list">
+            <p class="empty-copy">尚无高置信度玩具互动。</p>
+          </div>
+        </div>
+
+        <div class="coverage-section">
+          <header class="section-heading">
+            <div>
+              <p class="eyebrow">OBSERVATION COVERAGE</p>
+              <h2>录像覆盖</h2>
+            </div>
+          </header>
+          <p class="section-note">覆盖不足的时段标为未知，绝不按“没有发生”统计。</p>
+          <div id="coverage-list" class="coverage-list"></div>
+        </div>
+      </section>
+
+      <section class="limits" aria-label="结果边界">
+        <p class="eyebrow">HOW TO READ THIS</p>
+        <div id="notice-list"></div>
+      </section>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="/assets/diary.js?v=20260802-5" defer></script>
+  </body>
+</html>

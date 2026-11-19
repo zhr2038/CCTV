@@ -1,0 +1,37 @@
+[vision_language]
+provider = "qwen3-vl"
+model = "Qwen3-VL-8B-Instruct"
+model_path = ".data/models/qwen3-vl-8b-instruct"
+device = "cuda"
+quantization = "4bit"
+max_tokens = 2048
+temperature = 0.1
+local_files_only = true
+min_pixels = 200704
+max_pixels = 602112
+
+[vision_language.high_value]
+provider = "qwen3-vl"
+model = "Qwen3-VL-32B-Instruct"
+model_path = ".data/models/qwen3-vl-32b-instruct"
+device = "cuda"
+quantization = "4bit"
+max_tokens = 2048
+temperature = 0.1
+local_files_only = true
+candidate_confidence = 0.72
+
+[visual_embedding]
+provider = "qwen3-vl-embedding"
+model = "Qwen3-VL-Embedding-8B"
+model_path = ".data/models/qwen3-vl-embedding-8b"
+device = "cuda"
+quantization = "4bit"
+dimensions = 1024
+batch_size = 128
+local_files_only = true
+query_instruction = "Retrieve family CCTV frames that visually match the user's query."
+legacy_model = "google/siglip2-base-patch16-224"
+legacy_cache = ".data/models/huggingface"
+fallback_until_indexed = true
+activation_coverage = 0.95
